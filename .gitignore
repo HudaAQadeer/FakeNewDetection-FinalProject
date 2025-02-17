@@ -1,0 +1,18 @@
+# Ignore virtual environment
+venv/
+Lib/
+Include/
+Scripts/
+pyvenv.cfg
+
+# Ignore Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Ignore model files (if any)
+distilbert-fake-news.pt
+
+#extra testing files
+Testing2.ipynb
+Testing 3.ipynb
+
+
