@@ -10,7 +10,8 @@ pyvenv.cfg
 
 # Ignore model files (if any)
 distilbert-fake-news.pt
-distilbert_fake_news_v2
+distilbert_fake_news_v2/
+distilbert_fake_news_v2/model.safetensors
 
 
 #extra testing files
