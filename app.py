@@ -5,20 +5,21 @@ from transformers import DistilBertTokenizer, DistilBertForSequenceClassificatio
 import requests
 from bs4 import BeautifulSoup
 
-# Load model and tokenizer
-MODEL_PATH = "distilbert-fake-news.pt"  # Update with your model path
-tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
-model = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased', num_labels=2)
-model.load_state_dict(torch.load(MODEL_PATH, map_location=torch.device('cpu')))
-model.eval()
+# load the model and tokenizer
+MODEL_PATH = "distilbert-fake-news.pt"  # path of the model
+tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')  # loading the tokenizer
+model = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased', num_labels=2)  # loading the pre-trained model
+model.load_state_dict(torch.load(MODEL_PATH, map_location=torch.device('cpu')))  # loading the trained model
 
-# Sidebar navigation using buttons instead of radio buttons
+model.eval()  # set the model to evaluation mode (no gradients)
+
+# sidebar navigation using buttons instead of radio buttons
 st.sidebar.title("Navigation")
-home_button = st.sidebar.button("Home")
-about_button = st.sidebar.button("About")
-instructions_button = st.sidebar.button("Instructions")
+home_button = st.sidebar.button("Home")  # home button
+about_button = st.sidebar.button("About")  # about button
+instructions_button = st.sidebar.button("Instructions")  # instructions button
 
-# Set the default page based on button clicks
+# set the default page based on button clicks
 if home_button:
     page = "Home"
 elif about_button:
@@ -26,92 +27,93 @@ elif about_button:
 elif instructions_button:
     page = "Instructions"
 else:
-    page = "Home"  # Default page if no button is clicked yet
+    page = "Home"  # default page if no button is clicked yet
 
 if page == "Home":
     st.title("📰 Fake News Detector")
     st.write("Select whether you're entering a news statement or a URL, and the model will predict if it's fake or real.")
 
-    # Dropdown selector
+    # dropdown selector for input type (Text or URL)
     input_type = st.selectbox("Choose input type:", ["Text", "URL"])
 
-    # Text area or URL input based on selection
+    # text area or URL input based on selection
     if input_type == "Text":
         user_input = st.text_area("Enter a news statement:")
     else:
         user_input = st.text_input("Enter a news article URL:")
 
-    # Function to extract article text
+    # function to extract article text from URL
     def extract_text_from_url(url):
         try:
-            response = requests.get(url)
-            response.raise_for_status()
-            soup = BeautifulSoup(response.content, 'html.parser')
-            paragraphs = soup.find_all('p')
-            article_text = ' '.join([p.text for p in paragraphs])
+            response = requests.get(url)  # request the URL content
+            response.raise_for_status()  # check for errors
+            soup = BeautifulSoup(response.content, 'html.parser')  # parse HTML content
+            paragraphs = soup.find_all('p')  # find all paragraphs
+            article_text = ' '.join([p.text for p in paragraphs])  # extract text from paragraphs
             return article_text
         except requests.exceptions.RequestException as e:
-            st.error(f"Error fetching URL: {e}")
+            st.error(f"Error fetching URL: {e}")  # show error message
             return None
 
-    if st.button("Check"):
+    if st.button("Check"):  # when button is clicked
         if user_input:
-            if input_type == "URL":
-                if validators.url(user_input):
+            if input_type == "URL":  # if input is URL
+                if validators.url(user_input):  # check if URL is valid
                     st.info("Extracting article content from the URL...")
                     article_text = extract_text_from_url(user_input)
                     
                     if article_text:
-                        user_input = article_text  # Replace input with extracted text
+                        user_input = article_text  # replace input with extracted text
                     else:
                         st.error("Failed to extract text from the provided URL. Please enter a valid news link.")
-                        st.stop()
+                        st.stop()  # stop execution if extraction fails
                 else:
                     st.error("Invalid URL. Please enter a valid news link.")
-                    st.stop()
+                    st.stop()  # stop execution if URL is invalid
 
-            # Tokenize input
+            # tokenize the input text
             inputs = tokenizer(user_input, padding=True, truncation=True, max_length=128, return_tensors="pt")
             
-            with torch.no_grad():
-                outputs = model(**inputs)
+            with torch.no_grad():  # no need for gradient calculations
+                outputs = model(**inputs)  # forward pass through the model
 
-                # Probability scores
+                # probability scores for fake and real news
                 probabilities = torch.nn.functional.softmax(outputs.logits, dim=1)
                 fake_prob = probabilities[0][0].item() * 100
                 real_prob = probabilities[0][1].item() * 100 
 
-                # Label determination
+                # determine the label based on probabilities
                 label = "🛑 **Fake News**" if fake_prob > real_prob else "✅ **Real News**"
 
-                # Display results
+                # display the results
                 st.subheader(f"Prediction: {label}")
                 st.write(f"**Fake News Probability:** {fake_prob:.2f}%")
                 st.write(f"**Real News Probability:** {real_prob:.2f}%")
 
-                # Feedback section
+                # feedback section with rating slider
                 sentiment_mapping = ["one", "two", "three", "four", "five"]
                 selected = st.slider("Rate the prediction:", 1, 5)
                 if selected is not None:
                     st.markdown(f"You selected {sentiment_mapping[selected-1]} star(s).")
         
         else:
-            st.warning("Please enter a news statement or URL.")
+            st.warning("Please enter a news statement or URL.")  # warning if no input is given
 
 elif page == "About":
     st.title("ℹ️ About")
-    st.write("""This Fake News Detection System is developed as a final project for the course, aiming to identify and classify news as real or fake using a DistilBERT model. 
-The goal is to leverage natural language processing (NLP) and machine learning techniques to analyze news articles and provide accurate predictions.
+    st.write("""  
+This Fake News Detection System is developed as a final project for the course, aiming to identify and classify news as real or fake using a DistilBERT model.  
+The goal is to leverage natural language processing (NLP) and machine learning techniques to analyze news articles and provide accurate predictions.  
 
-The model is trained to process textual data, distinguishing between legitimate news and misinformation based on patterns it has learned from labeled datasets. 
-Users can enter a news statement or a URL, and the system will analyze the content to determine its authenticity.
+The model is trained to process textual data, distinguishing between legitimate news and misinformation based on patterns it has learned from labeled datasets.  
+Users can enter a news statement or a URL, and the system will analyze the content to determine its authenticity.  
 
-This project highlights the importance of AI in combating misinformation and demonstrates how transformer-based models like DistilBERT can be utilized in real-world applications to improve information credibility.""")
-
+This project highlights the importance of AI in combating misinformation and demonstrates how transformer-based models like DistilBERT can be utilized in real-world applications to improve information credibility.  
+""")
 
 elif page == "Instructions":
     st.title("📖 Instructions")
-    st.write("1. Select whether you're entering text or a URL.")
-    st.write("2. Input the news statement or paste a news article URL.")
-    st.write("3. Click the 'Check' button to analyze it.")
-    st.write("4. View the prediction and rate the accuracy of the results.")
+    st.write("1. Select whether you're entering text or a URL.")  # instruction step 1
+    st.write("2. Input the news statement or paste a news article URL.")  # instruction step 2
+    st.write("3. Click the 'Check' button to analyze it.")  # instruction step 3
+    st.write("4. View the prediction and rate the accuracy of the results.")  # instruction step 4
