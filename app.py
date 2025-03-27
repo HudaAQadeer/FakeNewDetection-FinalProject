@@ -10,6 +10,7 @@ from huggingface_hub import hf_hub_download
 # Model configuration
 MODEL_PATH = "distilbert_fake_news.pt"  # path of the model file in local storage
 REPO_ID = "HudaAQadeer/fake-news-detector"  # Hugging Face repository ID
+revision = "main"
 
 # Load the tokenizer and model from Hugging Face or local storage
 try:
@@ -18,7 +19,7 @@ try:
     model = DistilBertForSequenceClassification.from_pretrained(REPO_ID)
 
     # Load the model state dict manually 
-    model_state_dict = hf_hub_download(repo_id=REPO_ID, filename=MODEL_PATH, repo_type="model")
+    model_state_dict = hf_hub_download(repo_id=REPO_ID, filename=MODEL_PATH, repo_type="model", revision=revision)
     model.load_state_dict(torch.load(model_state_dict, map_location=torch.device("cpu")))
 
 except Exception as e:
