@@ -39,17 +39,21 @@ Includes a user feedback system to rate predictions.
 
    
 
-4. Install Dependencies
+3. Install Dependencies
    Install the required dependencies using pip:
 
         pip install -r requirements.txt
 
 
-5. Download the Model
+4. Download the Model:
 
-    The model file (distilbert_fake_news.pt) will be automatically downloaded from Hugging Face upon running the app, as the model is stored publicly on the Hugging Face Hub. You do not need to manually download the model.
+   You need to download the pre-trained model file distilbert-fake-news.pt from Hugging Face and place it in        the same directory as the app.py file.
 
-6. Run the Streamlit Application
+      [Download the model from Hugging Face](https://huggingface.co/HudaAQadeer/fake-news-detector)
+
+After downloading, make sure the model file is named distilbert-fake-news.pt.
+
+5. Run the Streamlit Application
 
     After setting everything up, run the application using Streamlit:
 
