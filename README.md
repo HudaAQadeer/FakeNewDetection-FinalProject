@@ -51,7 +51,7 @@ Includes a user feedback system to rate predictions.
 
       [Download the model from Hugging Face](https://huggingface.co/HudaAQadeer/fake-news-detector)
 
-After downloading, make sure the model file is named distilbert-fake-news.pt.
+After downloading, make sure the model file is named distilbert_fake_news.pt.
 
 5. Run the Streamlit Application
 
