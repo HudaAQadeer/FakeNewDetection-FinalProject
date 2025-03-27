@@ -27,12 +27,12 @@ Includes a user feedback system to rate predictions.
    
    Create a virtual environment and activate it:
 
-        For macOS/Linux:
+   For macOS/Linux:
         
         python3 -m venv fnvenv
         source fnvenv/bin/activate
 
-        For Windows:
+   For Windows:
         
         python -m venv fnvenv
         fnvenv\Scripts\activate
@@ -60,18 +60,30 @@ This will start the app and open it in your browser, where you can interact with
 Project Structure
 
 FakeNewsDetection-FinalProject/
+
 │-- app.py                  # Main Streamlit app
+
 │-- requirements.txt        # Required dependencies
+
 │-- FakeNewsDetection.ipynb # Jupyter Notebook for model training/testing
+
 │-- UnitTests.py            # Unit tests for the project
+
 │-- train.tsv               # Training dataset
+
 │-- valid.tsv               # Validation dataset
+
 │-- test.tsv                # Test dataset
+
 │-- .gitignore              # Ignore unnecessary files
+
 │-- README.md               # Project documentation
+
 │-- upload_model.py         # Model upload script
 
+
 Notes
+
 Ensure your Python environment is set up correctly before running the application.
 
 If Streamlit doesn't run correctly, try reinstalling it:
