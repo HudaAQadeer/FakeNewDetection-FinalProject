@@ -18,7 +18,7 @@ Includes a user feedback system to rate predictions.
    Clone the Repository Clone the repository to your local machine:
 
     
-       git clone https://github.com/HudaAQadeer/FakeNewsDetection-FinalProject.git
+       git clone https://github.com/HudaAQadeer/FakeNewDetection-FinalProject.git
        cd FakeNewsDetection-FinalProject
 
 
