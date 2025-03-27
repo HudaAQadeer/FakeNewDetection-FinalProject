@@ -47,7 +47,7 @@ Includes a user feedback system to rate predictions.
 
 4. Download the Model:
 
-   You need to download the pre-trained model file distilbert-fake-news.pt from Hugging Face and place it in        the same directory as the app.py file.
+   You need to download the pre-trained model file distilbert_fake_news.pt from Hugging Face and place it in        the same directory as the app.py file.
 
       [Download the model from Hugging Face](https://huggingface.co/HudaAQadeer/fake-news-detector)
 
