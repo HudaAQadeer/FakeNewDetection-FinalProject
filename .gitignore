@@ -9,8 +9,7 @@ pyvenv.cfg
 .ipynb_checkpoints/
 
 # Ignore model files (if any)
-distilbert_fake_news_v2/
-distilbert_fake_news_v2/model.safetensors
+distilbert_fake_news.pt
 
 
 
