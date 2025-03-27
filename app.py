@@ -4,38 +4,14 @@ import validators
 from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
 import requests
 from bs4 import BeautifulSoup
-from huggingface_hub import hf_hub_download
 
+# load the model and tokenizer
+MODEL_PATH = "distilbert_fake_news.pt"  # path of the model
+distilbert_tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')  # loading the tokenizer
+model = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased', num_labels=2)  # loading the pre-trained model
+model.load_state_dict(torch.load(MODEL_PATH, map_location=torch.device('cpu')))  # loading the trained model
 
-# Model configuration
-MODEL_PATH = "distilbert_fake_news.pt"  # path of the model file in local storage
-REPO_ID = "HudaAQadeer/fake-news-detector"  # Hugging Face repository ID
-revision = "main"
-
-# Load the tokenizer and model from Hugging Face or local storage
-try:
-    # Try loading tokenizer and model from Hugging Face Hub
-    distilbert_tokenizer = DistilBertTokenizer.from_pretrained(REPO_ID)
-    model = DistilBertForSequenceClassification.from_pretrained(REPO_ID)
-
-    # Load the model state dict manually 
-    model_state_dict = hf_hub_download(repo_id=REPO_ID, filename=MODEL_PATH, repo_type="model", revision=revision)
-    model.load_state_dict(torch.load(model_state_dict, map_location=torch.device("cpu")))
-
-except Exception as e:
-    print(f"Error loading from Hugging Face: {e}")
-    
-    # If there's an issue with downloading or accessing the model from Hugging Face, loads it from local storage
-    distilbert_tokenizer = DistilBertTokenizer.from_pretrained("distilbert-base-uncased")
-    model = DistilBertForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=2)
-
-    # If there is a manually downloaded model file, loads it here
-    model.load_state_dict(torch.load(MODEL_PATH, map_location=torch.device("cpu")))
-
-# Set model to evaluation mode (no gradients)
-model.eval()
-
-#Streamlit app UI
+model.eval()  # set the model to evaluation mode (no gradients)
 
 # sidebar navigation using buttons instead of radio buttons
 st.sidebar.title("Navigation")
@@ -97,7 +73,6 @@ if page == "Home":
 
             # tokenize the input text
             inputs = distilbert_tokenizer(user_input, padding=True, truncation=True, max_length=128, return_tensors="pt")
-
             
             with torch.no_grad():  # no need for gradient calculations
                 outputs = model(**inputs)  # forward pass through the model
